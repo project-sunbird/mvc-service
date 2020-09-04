@@ -8,7 +8,6 @@ import org.sunbird.search.util.SearchConstants;
 
 import java.util.HashMap;
 import java.util.Map;
-
 public class GetContentMetadata {
     static Logger logger = LoggerFactory.getLogger(GetContentMetadata.class);
     public static boolean validateSourceURL(String sourceurl) {
@@ -22,7 +21,6 @@ public class GetContentMetadata {
         }
         catch (Exception e) {
             logger.info("GetContentMetadata :: ValidateSourceUrl ::: Exception is " + e + "\n Source url is " + sourceurl);
-            insertintoFailedEventTopic(sourceurl);
         }
 
         return false;
@@ -49,13 +47,7 @@ public class GetContentMetadata {
         catch(Exception e)
         {
             logger.info("GetContentMetadata :: getMetadata ::: Exception is " + e + "\n ContentObject is " + contentobj.toString());
-            insertintoFailedEventTopic(sourceurl);
         }
      }
-  public  static void insertintoFailedEventTopic(String sourceurl){
-        logger.info("GetContentMetadata :: insertintoFailedEventTopic ::: SourceURL is " + sourceurl);
-        Map<String,Object> failedObj = new HashMap<String,Object>();
-        failedObj.put("sourceURL", sourceurl);
-        EventProducer.writeToKafka(failedObj.toString(), SearchConstants.mvcFailedtopic);
-    }
+
    }

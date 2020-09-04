@@ -95,7 +95,7 @@ public class ElasticSearchUtilTest extends BaseSearchTest {
 		addToIndex(id, content);
 		content.put("name", "Content_" + System.currentTimeMillis() + "_name");
 		ElasticSearchUtil.updateDocument(SearchConstants.COMPOSITE_SEARCH_INDEX,
-				SearchConstants.COMPOSITE_SEARCH_INDEX_TYPE, JsonUtils.serialize(content), id);
+				 JsonUtils.serialize(content), id);
 		String doc = ElasticSearchUtil.getDocumentAsStringById(SearchConstants.COMPOSITE_SEARCH_INDEX,
 				SearchConstants.COMPOSITE_SEARCH_INDEX_TYPE, id);
 		assertTrue(StringUtils.contains(doc, id));

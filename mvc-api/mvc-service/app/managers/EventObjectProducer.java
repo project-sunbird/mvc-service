@@ -9,7 +9,6 @@ import java.util.UUID;
 public class EventObjectProducer {
     private static String processID;
         public static void addToEventObj(Map<String,Object> content, String contentId) throws Exception  {
-
                 Map<String,Object> eventObj = JsonUtils.deserialize(SearchConstants.autocreatejobevent, Map.class);
                 final long timeinmillisecond = System.currentTimeMillis();
                 eventObj.put("ets", timeinmillisecond);
@@ -21,7 +20,7 @@ public class EventObjectProducer {
                 Map<String,Object> context = (Map<String,Object>) eventObj.get("context");
                 context.put("channel", content.get("channel").toString());
                 Map<String,Object> edata = (Map<String,Object>) eventObj.get("edata");
-                edata.put("repository", SearchConstants.vidyadaanurl + contentId);
+               edata.put("repository", content.get("sourceURL").toString());
                    if(content.containsKey("concepts")) {
                     content.remove("concepts");
                    }

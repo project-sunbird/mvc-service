@@ -11,7 +11,7 @@ class SearchSpec extends BaseSpec {
     "SearchApp" should {
         "search contents on search request" in {
             val controller = app.injector.instanceOf[controllers.SearchController]
-            val response = controller.search()(FakeRequest())
+            val response = controller.search(None)(FakeRequest())
             isOK(response)
             status(response) must equalTo(OK)
         }

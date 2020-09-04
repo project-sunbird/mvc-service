@@ -2,17 +2,15 @@ package managers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sunbird.common.JsonUtils;
-import org.sunbird.common.Platform;
 import org.sunbird.search.util.SearchConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 public class ReadJson {
+    Logger logger = LoggerFactory.getLogger(ReadJson.class);
     String sourceurl = "";
-     Logger logger = LoggerFactory.getLogger(ReadJson.class);
     public void read(String json,boolean flagformvc) {
         try {
             Map<String,Object> contentobj;
@@ -35,15 +33,11 @@ public class ReadJson {
                         GetContentMetadata.getMetadata(contentobj,sourceurl,flagformvc);
 
                     }
-                    else {
-                        GetContentMetadata.insertintoFailedEventTopic(sourceurl);
-                    }
             }
           }
         }
         catch (Exception e) {
             logger.info("ReadJson :: reading json ::: Exception is " + e + " sourceurl is " + sourceurl);
-            GetContentMetadata.insertintoFailedEventTopic(sourceurl);
         }
 
     }

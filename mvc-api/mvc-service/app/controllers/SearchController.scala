@@ -12,8 +12,9 @@ class SearchController @Inject()(@Named(ActorNames.SEARCH_ACTOR) searchActor: Ac
 
     val mgr: SearchManager = new SearchManager()
 
-    def search() = Action.async { implicit request =>
-        val internalReq = getRequest(ApiId.APPLICATION_MVCSEARCH)
+    def search(mode: Option[String]) = Action.async { implicit request =>
+        val modeForVector = mode.getOrElse("")
+        val internalReq = getRequest(ApiId.APPLICATION_MVCSEARCH,modeForVector)
         setHeaderContext(internalReq)
         getResult(mgr.search(internalReq, searchActor), ApiId.APPLICATION_MVCSEARCH)
     }

@@ -11,7 +11,6 @@ import java.util.UUID.randomUUID
 import scala.concurrent.{ExecutionContext, Future}
 import org.joda.time.{DateTime, DateTimeZone}
 
-import scala.collection.JavaConverters._
 
 class MVCContentController @Inject()(cc: ControllerComponents) (implicit exec: ExecutionContext) extends SearchBaseController(cc) {
   val readJson: ReadJson = new ReadJson()

@@ -9,15 +9,17 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.sunbird.kafka.client.KafkaClient;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Postman.class,EventProducer.class})
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"})
+@PrepareForTest({Postman.class,EventProducer.class, KafkaClient.class})
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*","javax.management.*"})
 public class MVCContentCreateTest {
     ObjectMapper mapper = new ObjectMapper();
 private String req = "{\"request\":{\"content\":[{\"board\":\"State(Tamil Nadu)\",\"subject\":[\"English\"],\"medium\":[\"Telegu\"],\"gradeLevel\":[\"Class 4\",\"Class 5\",\"Class 6\"],\"textbook_name\":[\"Science\"],\"level1Name\":[\"Sorting Materials Into Groups\"],\"level1Concept\":[\"Materials\"],\"source\":[\"Diksha 1\"],\"sourceURL\":\"https://diksha.gov.in/play/content/do_31283180221267968012331\"}]}}";
@@ -32,9 +34,8 @@ public void setup(){
   public void testContentCreateIfValidContent() throws Exception {
         validateResponse.put("statuscode","200");
         validateResponse.put("response",getResponse);
-        PowerMockito.mockStatic(EventProducer.class);
-        PowerMockito.doNothing().when(EventProducer.class);
-        EventProducer.writeToKafka(Mockito.anyString(),Mockito.anyString());
+        KafkaClient kafkaClient = mock(KafkaClient.class);
+        PowerMockito.doNothing().when(kafkaClient).send(Mockito.anyString(),Mockito.anyString());
         PowerMockito.mockStatic(Postman.class);
         Mockito.when(Postman.GET(Mockito.anyString())).thenReturn(validateResponse);
         ReadJson readJson = new ReadJson();
@@ -43,9 +44,8 @@ public void setup(){
     @Test
     public void testContentCreateIfSourceURLisInValid() throws Exception {
         validateResponse.put("statuscode","400");
-        PowerMockito.mockStatic(EventProducer.class);
-        PowerMockito.doNothing().when(EventProducer.class);
-        EventProducer.writeToKafka(Mockito.anyString(),Mockito.anyString());
+        KafkaClient kafkaClient = mock(KafkaClient.class);
+        PowerMockito.doNothing().when(kafkaClient).send(Mockito.anyString(),Mockito.anyString());
         PowerMockito.mockStatic(Postman.class);
         Mockito.when(Postman.GET(Mockito.anyString())).thenReturn(validateResponse);
         ReadJson readJson = new ReadJson();
@@ -53,9 +53,8 @@ public void setup(){
     }
     @Test
     public void testContentCreateIfStatusCodeHasError() throws Exception {
-        PowerMockito.mockStatic(EventProducer.class);
-        PowerMockito.doNothing().when(EventProducer.class);
-        EventProducer.writeToKafka(Mockito.anyString(),Mockito.anyString());
+        KafkaClient kafkaClient = mock(KafkaClient.class);
+        PowerMockito.doNothing().when(kafkaClient).send(Mockito.anyString(),Mockito.anyString());
         PowerMockito.mockStatic(Postman.class);
         Mockito.when(Postman.GET(Mockito.anyString())).thenReturn(Mockito.anyMap());
         ReadJson readJson = new ReadJson();
@@ -64,9 +63,8 @@ public void setup(){
     @Test
     public void testContentCreateIfContentMetaHasError() throws Exception {
         validateResponse.put("statuscode","200");
-        PowerMockito.mockStatic(EventProducer.class);
-        PowerMockito.doNothing().when(EventProducer.class);
-        EventProducer.writeToKafka(Mockito.anyString(),Mockito.anyString());
+        KafkaClient kafkaClient = mock(KafkaClient.class);
+        PowerMockito.doNothing().when(kafkaClient).send(Mockito.anyString(),Mockito.anyString());
         PowerMockito.mockStatic(Postman.class);
         Mockito.when(Postman.GET(Mockito.anyString())).thenReturn(validateResponse);
         ReadJson readJson = new ReadJson();

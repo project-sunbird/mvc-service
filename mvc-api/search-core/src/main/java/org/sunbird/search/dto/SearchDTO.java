@@ -20,6 +20,8 @@ public class SearchDTO {
     private Map<String, Object> softConstraints = new HashMap<String, Object>();
     private List<Map<String, Object>> aggregations = new ArrayList<>();
     private List<Map> implicitFilterProperties;
+    private List<Double> queryvector;
+
 
     public SearchDTO() {
         super();
@@ -62,6 +64,12 @@ public class SearchDTO {
     }
     public void setSortBy(Map<String, String> sortBy) {
         this.sortBy = sortBy;
+    }
+    public void setQueryvector(List<Double> vector) {
+        this.queryvector = vector;
+    }
+    public List<Double> getQueryvector() {
+        return this.queryvector;
     }
     public boolean isFuzzySearch() {
         return fuzzySearch;

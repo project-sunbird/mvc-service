@@ -158,17 +158,21 @@ public class ElasticSearchUtil {
 
 	}
 
-	public static boolean addIndex(String indexName, String documentType, String settings, String mappings)
+	public static boolean addIndex(String indexName, String documentType, String settings, String mappings, String esvalues)
 			throws IOException {
 		boolean response = false;
 		RestHighLevelClient client = getClient(indexName);
 		if (!isIndexExists(indexName)) {
 			CreateIndexRequest createRequest = new CreateIndexRequest(indexName);
-
-			if (StringUtils.isNotBlank(settings))
-				createRequest.settings(Settings.builder().loadFromSource(settings, XContentType.JSON));
-			if (StringUtils.isNotBlank(documentType) && StringUtils.isNotBlank(mappings))
-				createRequest.mapping( mappings, XContentType.JSON);
+			if(esvalues != null) {
+				createRequest.source(esvalues,XContentType.JSON);
+			}
+			else {
+				if (StringUtils.isNotBlank(settings))
+					createRequest.settings(Settings.builder().loadFromSource(settings, XContentType.JSON));
+				if (StringUtils.isNotBlank(documentType) && StringUtils.isNotBlank(mappings))
+					createRequest.mapping( mappings, XContentType.JSON);
+			}
 			CreateIndexResponse createIndexResponse = client.indices().create(createRequest,RequestOptions.DEFAULT);
 
 			response = createIndexResponse.isAcknowledged();
@@ -176,13 +180,13 @@ public class ElasticSearchUtil {
 		return response;
 	}
 
-	public static void addDocumentWithId(String indexName, String documentType, String documentId, String document) {
+	public static void addDocumentWithId(String indexName, String documentId, String document) {
 		try {
-			Map<String, Object> doc = mapper.readValue(document, new TypeReference<Map<String, Object>>() {
-			});
-			IndexResponse response = getClient(indexName)
-					.index(new IndexRequest(indexName, documentType, documentId).source(doc),RequestOptions.DEFAULT);
-			TelemetryManager.log("Added " + response.getId() + " to index " + response.getIndex());
+			IndexRequest indexRequest = new IndexRequest(indexName);
+			indexRequest.id(documentId);
+			indexRequest.source(document,XContentType.JSON);
+			IndexResponse indexResponse = getClient(indexName).index(indexRequest,RequestOptions.DEFAULT);
+			TelemetryManager.log("Added " + indexResponse.getId() + " to index " + indexResponse.getIndex());
 		} catch (IOException e) {
 			TelemetryManager.error("Error while adding document to index :" + indexName, e);
 		}
@@ -199,15 +203,15 @@ public class ElasticSearchUtil {
 		}
 	}
 
-	public static void updateDocument(String indexName, String documentType, String document, String documentId)
-			throws InterruptedException, ExecutionException {
-		try {
-			Map<String, Object> doc = mapper.readValue(document, new TypeReference<Map<String, Object>>() {
-			});
-			IndexRequest indexRequest = new IndexRequest(indexName, documentType, documentId).source(doc);
-			UpdateRequest request = new UpdateRequest().index(indexName).type(documentType).id(documentId).doc(doc)
-					.upsert(indexRequest);
-			UpdateResponse response = getClient(indexName).update(request,RequestOptions.DEFAULT);
+	public static void updateDocument(String indexName, String documentId, String document)
+			 {
+		try {Map<String, Object> doc = mapper.readValue(document, new TypeReference<Map<String, Object>>() {
+		});
+			UpdateRequest updateRequest = new UpdateRequest();
+			updateRequest.index(indexName);
+			updateRequest.id(documentId);
+			updateRequest.doc(doc);
+			UpdateResponse response = getClient(indexName).update(updateRequest,RequestOptions.DEFAULT);
 			TelemetryManager.log("Updated " + response.getId() + " to index " + response.getIndex());
 		} catch (IOException e) {
 			TelemetryManager.error("Error while updating document to index :" + indexName, e);

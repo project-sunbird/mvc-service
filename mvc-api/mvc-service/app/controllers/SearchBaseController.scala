@@ -5,6 +5,7 @@ import java.util.UUID
 
 import akka.actor.ActorRef
 import akka.pattern.Patterns
+import managers.VectorListManager
 import org.apache.commons.lang3.StringUtils
 import org.sunbird.common.dto.{RequestParams, Response, ResponseHandler}
 import org.sunbird.common.exception.ResponseCode
@@ -71,7 +72,7 @@ abstract class SearchBaseController(protected val cc: ControllerComponents)(impl
         response.getParams.setResmsgid(UUID.randomUUID().toString)
     }
 
-    protected def getRequest(apiId: String)(implicit playRequest: play.api.mvc.Request[AnyContent]): org.sunbird.common.dto.Request = {
+    protected def getRequest(apiId: String,mode: String="")(implicit playRequest: play.api.mvc.Request[AnyContent]): org.sunbird.common.dto.Request = {
         val request: org.sunbird.common.dto.Request = new org.sunbird.common.dto.Request
         if (null != playRequest) {
             val body = playRequest.body.asJson.getOrElse("{}").toString
@@ -96,7 +97,13 @@ abstract class SearchBaseController(protected val cc: ControllerComponents)(impl
                 }
                 val requestObj: AnyRef = requestMap.get("request")
                 if (null != requestObj) try {
-                    val strRequest: String = JsonUtils.serialize(requestObj)
+                    var strRequest: String = JsonUtils.serialize(requestObj)
+                    // Vector API integration by Tanmay
+                    if(mode != "" && mode.equals("vector")) {
+                        val strRequestnew = new VectorListManager().setVectorList(strRequest);
+                        if(strRequestnew != null)
+                         strRequest = JsonUtils.serialize(strRequestnew)
+                    }
                     val map: java.util.Map[String, AnyRef] = JsonUtils.deserialize(strRequest, classOf[java.util.Map[String, Object]])
                     if (null != map && !map.isEmpty) {
                         request.setRequest(map)

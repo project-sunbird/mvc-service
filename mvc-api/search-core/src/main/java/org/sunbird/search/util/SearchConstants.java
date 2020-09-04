@@ -5,6 +5,7 @@ import org.sunbird.common.Platform;
 public class SearchConstants {
     public static String COMPOSITE_SEARCH_INDEX = Platform.config.hasPath("compositesearch.index.name") ? Platform.config.getString("compositesearch.index.name"): "compositesearch";
     public static String MVC_SEARCH_INDEX = "mvc-content";
+    public static final String MVC_SEARCH_INDEX_TYPE = "_doc";
     public static final String COMPOSITE_SEARCH_INDEX_TYPE = "cs";
     public static final String OPERATION_CREATE = "CREATE";
     public static final String OPERATION_UPDATE = "UPDATE";
@@ -112,10 +113,11 @@ public class SearchConstants {
     public static final String mode = "mode";
     public static final String softConstraints = "softConstraints";
     public static String soft = "soft";
+    public static String mlvectorListRequest = "{\"request\":{\"text\":[],\"language\":\"en\",\"method\":\"BERT\",\"params\":{\"dim\":768,\"seq_len\":25}}}";
     public static String dikshaurl = "https://diksha.gov.in";
     public static String vidyadaanurl = "https://dock.sunbirded.org/";
     public static String contentreadapi = "/api/content/v1/read/";
     public static String autocreatejobevent = "{\"eid\":\"BE_JOB_REQUEST\",\"mid\":\"\",\"actor\":{\"id\":\"Auto Creator\",\"type\":\"System\"},\"context\":{\"pdata\":{\"ver\":\"1.0\",\"id\":\"org.ekstep.platform\"},\"channel\":\"\"},\"object\":{\"ver\":\"1.0\",\"id\":\"\"},\"edata\":{\"action\":\"auto-create\",\"iteration\":1,\"objectType\":\"Content\",\"repository\":\"\",\"metadata\":{}}}";
     public static String mvcFailedtopic = "sunbirddock.auto.creation.job.failedevent";
-    public static int contentArrayLimit = 10;
+    public static int contentArrayLimit = 30;
 }
